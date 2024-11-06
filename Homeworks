@@ -1,0 +1,127 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy.stats import skew, kurtosis, mode
+
+#Loading the dataset
+data = pd.read_csv('spambase.csv')
+
+# Distribution of capitalLong
+plt.figure(figsize=(10, 6))
+plt.plot(data['capitalLong'])
+plt.title("Distribution of 'capitalLong'")
+plt.xlabel("Index")
+plt.ylabel("capitalLong")
+plt.show()
+
+# Bar chart for frequency of Spam vs Nonspam Emails
+plt.figure(figsize=(8, 6))
+sns.countplot(x='type', data=data)
+plt.title("Frequency of 'type' (Spam vs Nonspam)")
+plt.show()
+
+# Scatter Plot of 'num3d' vs 'num000'
+plt.figure(figsize=(10, 6))
+plt.scatter(data['num3d'], data['num000'])
+plt.title("Scatter Plot of 'num3d' vs 'num000'")
+plt.xlabel("num3d")
+plt.ylabel("num000")
+plt.show()
+
+# Histogram for the distribution of 'money'
+plt.figure(figsize=(10, 6))
+plt.hist(data['money'], bins=30, color='skyblue', edgecolor='black')
+plt.title("Distribution of 'money'")
+plt.xlabel("Money")
+plt.ylabel("Frequency")
+plt.show()
+
+# Pie chart for Proportion of Spam vs Nonspam Emails
+spam_counts = data['type'].value_counts()
+plt.figure(figsize=(8, 8))
+plt.pie(spam_counts, labels=spam_counts.index, autopct='%1.1f%%', startangle=140)
+plt.title("Proportion of Spam vs Nonspam Emails")
+plt.show()
+
+# Summary statistics for 'capitalAve'
+summary_stats = data['capitalAve'].describe()
+print("Summary Statistics for 'capitalAve':\n", summary_stats)
+
+# Mean, median, and standard deviation for 'our'
+our_mean = data['our'].mean()
+our_median = data['our'].median()
+our_std = data['our'].std()
+print(f"Mean of 'our': {our_mean}\nMedian of 'our': {our_median}\nStandard Deviation of 'our': {our_std}")
+
+# Minimum and Maximum for 'hp'
+hp_min = data['hp'].min()
+hp_max = data['hp'].max()
+print(f"Minimum of 'hp': {hp_min}\nMaximum of 'hp': {hp_max}")
+
+# Percentiles for 'telnet'
+telnet_25 = data['telnet'].quantile(0.25)
+telnet_50 = data['telnet'].quantile(0.50)
+telnet_75 = data['telnet'].quantile(0.75)
+print(f"25th percentile of 'telnet': {telnet_25}\n50th percentile (median) of 'telnet': {telnet_50}\n75th percentile of 'telnet': {telnet_75}")
+
+# Mode of 'you'
+you_mode = mode(data['you'])[0][0]
+print(f"Mode of 'you': {you_mode}")
+
+# Interquartile Range (IQR) for 'business'
+business_iqr = data['business'].quantile(0.75) - data['business'].quantile(0.25)
+print(f"IQR of 'business': {business_iqr}")
+
+# Skewness and Kurtosis for 'credit'
+credit_skewness = skew(data['credit'])
+credit_kurtosis = kurtosis(data['credit'])
+print(f"Skewness of 'credit': {credit_skewness}\nKurtosis of 'credit': {credit_kurtosis}")
+
+# Correlation coefficient between 'capitalAve' and 'capitalTotal'
+capital_corr = data['capitalAve'].corr(data['capitalTotal'])
+print(f"Correlation Coefficient between 'capitalAve' and 'capitalTotal': {capital_corr}")
+
+# Range of 'num857'
+num857_range = data['num857'].max() - data['num857'].min()
+print(f"Range of 'num857': {num857_range}")
+
+# Variance of 'money'
+money_variance = data['money'].var()
+print(f"Variance of 'money': {money_variance}")
+
+# Correlation matrix
+correlation_matrix = data.corr()
+print("Correlation Matrix:\n", correlation_matrix)
+
+# Identifying the highest positive and negative correlations
+correlation_pairs = correlation_matrix.unstack().sort_values()
+correlation_pairs = correlation_pairs[correlation_pairs.index.get_level_values(0) != correlation_pairs.index.get_level_values(1)]
+
+highest_positive_corr = correlation_pairs[correlation_pairs > 0].nlargest(2)
+highest_negative_corr = correlation_pairs[correlation_pairs < 0].nsmallest(2)
+
+print("\nTwo highest positive correlations:")
+print(highest_positive_corr)
+
+print("\nTwo highest negative correlations:")
+print(highest_negative_corr)
+
+# Heatmap for correlation matrix
+plt.figure(figsize=(12, 8))
+sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap="coolwarm", cbar=True)
+plt.title("Correlation Matrix Heatmap")
+plt.show()
+
+# Specific correlation coefficients
+remove_internet_corr = data['remove'].corr(data['internet'])
+print(f"\nCorrelation coefficient between 'remove' and 'internet': {remove_internet_corr}")
+
+num3d_num000_corr = data['num3d'].corr(data['num000'])
+print(f"Correlation coefficient between 'num3d' and 'num000': {num3d_num000_corr}")
+
+font_money_corr = data['font'].corr(data['money'])
+print(f"Correlation coefficient between 'font' and 'money': {font_money_corr}")
+
+table_technology_corr = data['table'].corr(data['technology'])
+print(f"Correlation coefficient between 'table' and 'technology': {table_technology_corr}")
